@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Chat App</string>
+    <string name="client_id">301325602814-rop32coj7f000il0pa2svd84nqv526mq.apps.googleusercontent.com</string>
+    <string name="title_activity_contacts_screen">ContactsScreen</string>
+    <string name="title_activity_chat_screen">ChatScreen</string>
+    <string name="title_activity_splash">SplashActivity</string>
+</resources>
