@@ -126,6 +126,9 @@ class ChatScreen : ComponentActivity() {
                         if (u.uid == uid)
                             user.value = u
                     }
+                    val sdf = SimpleDateFormat("HH:mm")
+                    val currentDateAndTime = sdf.format(Date())
+                    val m = Message(uid_contact, uid, text.value.text, currentDateAndTime)
                     Column (
                         modifier = Modifier.fillMaxSize()
                     ) {
@@ -167,14 +170,10 @@ class ChatScreen : ComponentActivity() {
                             )
                         }
                     }
-                    LazyColumn (
-                        modifier = Modifier.padding(vertical = 100.dp)
-                    ) {
+                    LazyColumn () {
                         items(messageList) {
                             if (it.from == uid)
                                 sentMessage(text = it.text!!, userData = user.value)
-                            else
-                                receivedMessage(text = it.text!!, userData = user.value)
                         }
                     }
                     Row(
@@ -189,8 +188,8 @@ class ChatScreen : ComponentActivity() {
                             onValueChange = {
                                 text.value = it
                             },
-                            placeholder = { Text(text = "Hello!") },
-                            label = { Text("Send Message") },
+                            placeholder = { Text(text = "New message") },
+                            label = { Text("Enter text") },
                             modifier = Modifier
                                 .padding(8.dp),
 
@@ -198,15 +197,28 @@ class ChatScreen : ComponentActivity() {
                                 keyboardType = KeyboardType.Text,
                                 imeAction = ImeAction.Done
                             ),
-                        )
+                            keyboardActions = KeyboardActions(
+                                onDone = {
+                                    Toast.makeText(this@ChatScreen, "Message sent!", Toast.LENGTH_SHORT)
+                                        .show()
+                                    val reference = Firebase.database.reference.child("users")
+                                    val key = reference.push().key.toString()
+                                    reference.child(uid)
+                                        .child("message")
+                                        .child(key)
+                                        .setValue(m)
+                                    reference.child(uid_contact!!)
+                                        .child("message")
+                                        .child(key)
+                                        .setValue(m)
 
+                                    text.value = TextFieldValue("")
+                                }
+                            ))
 
 
                         Button(
                             onClick = {
-                            val sdf = SimpleDateFormat("HH:mm")
-                            val currentDateAndTime = sdf.format(Date())
-                            val m = Message(uid_contact, uid, text.value.text, currentDateAndTime)
                             val reference = Firebase.database.reference.child("users")
                             val key = reference.push().key.toString()
                             reference.child(uid)

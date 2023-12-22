@@ -5,10 +5,12 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -30,7 +32,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.chatApp.model.UserData
@@ -82,6 +83,7 @@ class ContactsScreen : ComponentActivity() {
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(horizontal = 16.dp, vertical = 4.dp)
+                                        .padding(bottom = 100.dp)
                                         .clickable {
                                             val uid_sent = it.uid
                                             val i = Intent(context, ChatScreen::class.java)
@@ -117,10 +119,42 @@ class ContactsScreen : ComponentActivity() {
                                                     .padding(horizontal = 16.dp)
                                             )
                                         }
-
                                     }
                                 )
                             }
+                        }
+                    }
+                    Card (
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(80.dp)
+                            .clickable {
+                                val i = Intent(context, SettingsScreen::class.java)
+                                i.putExtra("uid", uid)
+                                startActivity(i)
+                            },
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color(0xFFFDFDFD)
+                        ),
+                    ) {
+                        Row (
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Image(painter = painterResource(R.drawable.user),
+                                contentDescription = ("no image"),
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.clip(CircleShape))
+
+                            Text(
+                                text = "Settings",
+                                fontSize = 24.sp,
+                                modifier = Modifier
+                                    .padding(horizontal = 16.dp)
+                            )
                         }
                     }
                 }

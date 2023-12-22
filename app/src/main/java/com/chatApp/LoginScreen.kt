@@ -1,5 +1,6 @@
 package com.chatApp
 
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -33,6 +34,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
@@ -116,7 +120,10 @@ class LoginScreen : ComponentActivity() {
         auth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-
+                    val shared = getSharedPreferences("LOGIN", Context.MODE_PRIVATE)
+                    val edit = shared.edit()
+                    edit.putBoolean("logged", true)
+                    edit.apply()
                     val user = auth.currentUser
                     val userData = UserData(
                         user?.displayName,
@@ -124,7 +131,28 @@ class LoginScreen : ComponentActivity() {
                         user?.email,
                         user?.photoUrl.toString()
                     )
-                    setUser(userData)
+                    val reference = Firebase.database.reference.child("users")
+                    var b = true
+                    reference.addValueEventListener(object : ValueEventListener {
+                        override fun onDataChange(snapshot: DataSnapshot) {
+                            val children = snapshot.children
+                            children.forEach {
+                                val user = it.getValue(UserData::class.java)
+                                if (user != null && user.uid == userData.uid) {
+                                    b = false
+                                }
+                            }
+                            if (b) {
+                                setUser(userData)
+                            }
+
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {
+                            Log.d("TAG", "onCancelled: ${error.message}")
+                        }
+
+                    })
                 } else {
                     Log.d("TAG", "error: Authentication Failed.")
                 }
