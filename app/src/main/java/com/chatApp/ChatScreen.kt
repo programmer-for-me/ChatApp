@@ -205,10 +205,12 @@ class ChatScreen : ComponentActivity() {
                                     val key = reference.push().key.toString()
                                     reference.child(uid)
                                         .child("message")
+                                        .child(uid_contact!!)
                                         .child(key)
                                         .setValue(m)
-                                    reference.child(uid_contact!!)
+                                    reference.child(uid_contact)
                                         .child("message")
+                                        .child(uid)
                                         .child(key)
                                         .setValue(m)
 

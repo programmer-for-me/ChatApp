@@ -45,10 +45,13 @@ class SplashActivity : ComponentActivity() {
                             delay(10000L)
                             val shared = getSharedPreferences("LOGIN", Context.MODE_PRIVATE)
                             val isLogged = shared.getBoolean("logged", false)
-                            val i = if (isLogged) {
-                                Intent(context, ContactsScreen::class.java)
+                            val uid = shared.getString("uid", null)
+                            var i: Intent
+                            if (isLogged) {
+                                i = Intent(context, ContactsScreen::class.java)
+                                i.putExtra("uid", uid)
                             } else {
-                                Intent(context, LoginScreen::class.java)
+                                i = Intent(context, LoginScreen::class.java)
                             }
                             startActivity(i)
                         }

@@ -120,11 +120,12 @@ class LoginScreen : ComponentActivity() {
         auth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
+                    val user = auth.currentUser
                     val shared = getSharedPreferences("LOGIN", Context.MODE_PRIVATE)
                     val edit = shared.edit()
                     edit.putBoolean("logged", true)
+                    edit.putString("uid", user?.uid)
                     edit.apply()
-                    val user = auth.currentUser
                     val userData = UserData(
                         user?.displayName,
                         user?.uid,
@@ -139,15 +140,14 @@ class LoginScreen : ComponentActivity() {
                             children.forEach {
                                 val user = it.getValue(UserData::class.java)
                                 if (user != null && user.uid == userData.uid) {
-                                    b = false
+                                    b=false
                                 }
                             }
-                            if (b) {
+                            if(b){
                                 setUser(userData)
                             }
 
                         }
-
                         override fun onCancelled(error: DatabaseError) {
                             Log.d("TAG", "onCancelled: ${error.message}")
                         }
